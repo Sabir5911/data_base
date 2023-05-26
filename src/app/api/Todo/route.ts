@@ -38,9 +38,8 @@ export async function POST(request:NextRequest){
             
             return NextResponse.json({message:"your data has been added  :)"})
 
-        }
-else{
-    throw new Error("Enter the Task!!!!")
+        }else{
+    throw new Error("Enter the Task!!!!")     
 }
     }catch(err){
 return NextResponse.json({message:(err as {message:string}).message})
