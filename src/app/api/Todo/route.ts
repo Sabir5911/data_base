@@ -1,48 +1,43 @@
-import { Todo,NewTodo,db,todostable } from '@/app/lib/drizzel';
 import { sql } from '@vercel/postgres';
 import { NextRequest,NextResponse } from 'next/server'
-import { Message } from 'postcss';
-import { cache } from 'react';
 
-export async function GET(requesr:NextRequest){
+import { NewTodo,db,NewTodos } from '@/app/lib/drizzel';
 
+export async function  GET(NextRequest:NextRequest){
 
-    // const client = await db.connect();
-    try{
+try{
+    await sql`CREATE TABLE IF NOT EXISTS Todos(id serial, task varchar(255));`
+  const res =await db.select().from(NewTodos)
+    return NextResponse.json({data:res})
 
-        await sql`CREATE TABLE IF NOT EXISTS Todos(id serial, Task varchar(256));`
+}catch(err){
+    console.log((err as {message:string}).message);
     
-    
-       const res= await db.select().from(todostable)      
-       console.log(res);
-       
-        // const res= await client.sql`SELECT * FROM Todos`
-        return NextResponse.json({message:res})
- 
-    }catch(err){ 
-        console.log((err as {message:string}).message);
-        
-return new NextResponse("ERROR 404")   
-    }
+return NextResponse.json({message:"some thing went wrong"})
+}     
 }
 
-export async function POST(request:NextRequest){
-    const req=await request.json()
+
+
+ 
+export async function  POST(NextRequest:NextRequest){
+    const req= await NextRequest.json()
+
     try{
         if(req.task){
-            // const client = await db.connect();
-            const res=await db.insert(todostable).values({
-                tasks:req.task
-            }).returning()
+
+            const res= await db.insert(NewTodos).values({
+                task: req.task, 
+            }).returning();
             console.log(res);
-            
-            return NextResponse.json({message:"your data has been added  :)"})
+        
+            return NextResponse.json({message:"task added in to the data base",res})
 
         }else{
-    throw new Error("Enter the Task!!!!")     
-}
+            throw new Error('you did not enter tasks')
+        }
+    
     }catch(err){
-return NextResponse.json({message:(err as {message:string}).message})
+    return NextResponse.json({message:"some thing went wrong"})
+    }     
     }
-
-}
