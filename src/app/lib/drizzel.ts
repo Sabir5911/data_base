@@ -10,7 +10,7 @@ import {
   import { InferModel } from "drizzle-orm";
   import { sql } from "@vercel/postgres";
 import { type } from "os";
-  export const  NewTodos = pgTable('newtodos',{
+  export const  todostable = pgTable('newtodos',{
 
     id: serial("id").primaryKey(),                                    // primary key is the id and alwasy unique
 
@@ -18,8 +18,8 @@ import { type } from "os";
 
   })
 
-  export type Todo =InferModel<typeof NewTodos>
-  export type NewTodo =InferModel<typeof NewTodos, "insert">
+  export type Todo =InferModel<typeof todostable>
+  export type NewTodo =InferModel<typeof todostable, "insert">
 
   export const db=drizzle(sql)
 
